@@ -20,6 +20,22 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
+    const parts = pathname.split('/');
+
+      if (method === 'GET' && parts.length === 3 && parts[1] === 'books') {
+      const id = Number(parts[2]);
+      const books = await loadBooks();
+      const book = books.find((b) => b.id === id);
+
+      if (!book) {
+        sendJson(res, 404, { error: 'Book not found' });
+        return;
+      }
+
+      sendJson(res, 200, book);
+      return;
+    }
+
     sendJson(res, 404, { error: 'Route not found' });
   } catch (err) {
     console.error(err);
