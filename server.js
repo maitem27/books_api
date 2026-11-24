@@ -9,24 +9,24 @@ function sendJson(res, status, data) {
   res.end(JSON.stringify(data));
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   const { method } = req;
   const { pathname } = new URL(req.url, 'http://localhost');
 
-  if (method === 'GET' && pathname === '/books') {
-    loadBooks((err, books) => {
-      if (err) {
-        console.error(err);
-        sendJson(res, 500, { error: 'Server error' });
-        return;
-      }
+  try {
+    if (method === 'GET' && pathname === '/books') {
+      const books = await loadBooks();
       sendJson(res, 200, books);
-    });
-    return;
-  }
+      return;
+    }
 
-  sendJson(res, 404, { error: 'Route not found' });
+    sendJson(res, 404, { error: 'Route not found' });
+  } catch (err) {
+    console.error(err);
+    sendJson(res, 500, { error: 'Server error' });
+  }
 });
+
 
 server.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

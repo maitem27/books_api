@@ -1,23 +1,9 @@
-import fs from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const file = path.join(import.meta.dirname, 'books.json');
 
-export function loadBooks(callback) {
-    fs.readFile(file, 'utf8', (err, content) => {
-        if (err) {
-            callback(err);
-            return;
-        }
-
-        let books;
-        try {
-            books = JSON.parse(content);
-        } catch (parseError) {
-            callback(parseError);
-            return
-        }
-
-        callback(null, books);
-    });
+export async function loadBooks(){
+    const content = await readFile(file, 'utf8');
+    return JSON.parse(content);
 }
