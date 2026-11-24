@@ -1,7 +1,7 @@
 import http from 'node:http';
 import { books } from './books.js';
 
-const port = 3000;
+const port = process.env.PORT ?? 3000;
 
 function sendJson(res, status, data) {
   res.statusCode = status;
