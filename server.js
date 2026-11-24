@@ -1,5 +1,5 @@
 import http from 'node:http';
-import { books } from './books.js';
+import { loadBooks } from './books.js';
 
 const port = process.env.PORT ?? 3000;
 
@@ -14,7 +14,14 @@ const server = http.createServer((req, res) => {
   const { pathname } = new URL(req.url, 'http://localhost');
 
   if (method === 'GET' && pathname === '/books') {
-    sendJson(res, 200, books);
+    loadBooks((err, books) => {
+      if (err) {
+        console.error(err);
+        sendJson(res, 500, { error: 'Server error' });
+        return;
+      }
+      sendJson(res, 200, books);
+    });
     return;
   }
 
